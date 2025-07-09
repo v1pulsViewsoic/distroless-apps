@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+
+  payload:
+    build:
+      context: ./payloadcms
+      dockerfile: Dockerfile-distroless
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./payloadcms/.env.example
+    depends_on:
+      - mongo

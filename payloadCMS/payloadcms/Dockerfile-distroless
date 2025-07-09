@@ -1,0 +1,28 @@
+# ---------- Build Stage ----------
+FROM node:18-slim AS builder
+
+WORKDIR /app
+
+# Install dependencies
+COPY package*.json ./
+RUN npm install --production=false
+
+# Copy app source
+COPY . .
+
+# Build Payload admin panel
+RUN npm run build
+
+# ---------- Final (Distroless) Stage ----------
+FROM gcr.io/distroless/nodejs18-debian12
+
+WORKDIR /app
+
+# Copy built app from builder
+COPY --from=builder /app /app
+
+# Expose Payload default port
+EXPOSE 3000
+
+# Start Payload
+CMD ["server.js"]

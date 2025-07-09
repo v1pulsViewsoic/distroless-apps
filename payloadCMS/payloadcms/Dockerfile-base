@@ -1,0 +1,23 @@
+FROM node:18-slim
+
+# Set working directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json first
+# This lets Docker cache npm install separately from app changes
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of your app source code
+COPY . .
+
+# Build the Payload Admin panel
+RUN npm run build
+
+# Expose default Payload CMS port
+EXPOSE 3000
+
+# Start Payload
+CMD ["npm", "start"]
